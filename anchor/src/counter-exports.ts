@@ -21,7 +21,7 @@ export function getSoocounterProgramId(cluster: Cluster) {
     case 'devnet':
     case 'testnet':
       // This is the program ID for the Soocounter program on devnet and testnet.
-      return new PublicKey('Ho4gWX427c2qWdy1ZrQ97qA5B8eeSe86okrxJ1nMxvkR')
+      return new PublicKey('CKFcAMMHUmcymkBGTRtgYQFCnVXQCyFaLtpdmeyjTE88')
     case 'mainnet-beta':
     default:
       return SOONCOUNTER_PROGRAM_ID

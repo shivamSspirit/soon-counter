@@ -5,7 +5,7 @@
  * IDL can be found at `target/idl/soo_counter.json`.
  */
 export type SooCounter = {
-  "address": "Ho4gWX427c2qWdy1ZrQ97qA5B8eeSe86okrxJ1nMxvkR",
+  "address": "CKFcAMMHUmcymkBGTRtgYQFCnVXQCyFaLtpdmeyjTE88",
   "metadata": {
     "name": "sooCounter",
     "version": "0.1.0",

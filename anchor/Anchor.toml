@@ -6,13 +6,13 @@ resolution = true
 skip-lint = false
 
 [programs.devnet]
-soo_counter = "Ho4gWX427c2qWdy1ZrQ97qA5B8eeSe86okrxJ1nMxvkR"
+soo_counter = "CKFcAMMHUmcymkBGTRtgYQFCnVXQCyFaLtpdmeyjTE88"
 
 [registry]
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "https://rpc.testnet.soo.network/rpc"
+cluster = "https://rpc.devnet.soo.network/rpc"
 wallet = "/Users/shivamsoni/.config/solana/id.json"
 
 [scripts]
