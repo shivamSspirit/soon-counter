@@ -5,15 +5,15 @@ anchor_version = "0.30.1"
 resolution = true
 skip-lint = false
 
-[programs.localnet]
-soonsoonsooncounter = "AsjZ3kWAUSQRNt2pZVeJkywhZ6gpLpHZmJjduPmKZDZZ"
+[programs.devnet]
+soo_counter = "Ho4gWX427c2qWdy1ZrQ97qA5B8eeSe86okrxJ1nMxvkR"
 
 [registry]
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "Localnet"
-wallet = "~/.config/solana/id.json"
+cluster = "https://rpc.testnet.soo.network/rpc"
+wallet = "/Users/shivamsoni/.config/solana/id.json"
 
 [scripts]
 test = "../node_modules/.bin/jest --preset ts-jest"

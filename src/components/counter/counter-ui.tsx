@@ -1,18 +1,20 @@
 'use client'
 
-import { Keypair, PublicKey } from '@solana/web3.js'
+import { PublicKey } from '@solana/web3.js'
 import { useMemo } from 'react'
 import { ellipsify } from '../ui/ui-layout'
 import { ExplorerLink } from '../cluster/cluster-ui'
-import { useSoonsoonsooncounterProgram, useSoonsoonsooncounterProgramAccount } from './soonsoonsooncounter-data-access'
+import { useSoocounterProgram, useSoocounterProgramAccount } from './counter-data-access'
+import { useWallet } from '@solana/wallet-adapter-react'
 
-export function SoonsoonsooncounterCreate() {
-  const { initialize } = useSoonsoonsooncounterProgram()
+export function SoocounterCreate() {
+  const { initialize } = useSoocounterProgram()
+  const { publicKey } = useWallet();
 
   return (
     <button
       className="btn btn-xs lg:btn-md btn-primary"
-      onClick={() => initialize.mutateAsync(Keypair.generate())}
+      onClick={() => initialize.mutateAsync({ user: publicKey! })}
       disabled={initialize.isPending}
     >
       Create {initialize.isPending && '...'}
@@ -20,8 +22,8 @@ export function SoonsoonsooncounterCreate() {
   )
 }
 
-export function SoonsoonsooncounterList() {
-  const { accounts, getProgramAccount } = useSoonsoonsooncounterProgram()
+export function SoocounterList() {
+  const { accounts, getProgramAccount } = useSoocounterProgram()
 
   if (getProgramAccount.isLoading) {
     return <span className="loading loading-spinner loading-lg"></span>
@@ -40,7 +42,7 @@ export function SoonsoonsooncounterList() {
       ) : accounts.data?.length ? (
         <div className="grid md:grid-cols-2 gap-4">
           {accounts.data?.map((account) => (
-            <SoonsoonsooncounterCard key={account.publicKey.toString()} account={account.publicKey} />
+            <SooncounterCard key={account.publicKey.toString()} account={account.publicKey} />
           ))}
         </div>
       ) : (
@@ -53,8 +55,8 @@ export function SoonsoonsooncounterList() {
   )
 }
 
-function SoonsoonsooncounterCard({ account }: { account: PublicKey }) {
-  const { accountQuery, incrementMutation, setMutation, decrementMutation, closeMutation } = useSoonsoonsooncounterProgramAccount({
+function SooncounterCard({ account }: { account: PublicKey }) {
+  const { accountQuery, incrementMutation, decrementMutation } = useSoocounterProgramAccount({
     account,
   })
 
@@ -67,7 +69,7 @@ function SoonsoonsooncounterCard({ account }: { account: PublicKey }) {
       <div className="card-body items-center text-center">
         <div className="space-y-6">
           <h2 className="card-title justify-center text-3xl cursor-pointer" onClick={() => accountQuery.refetch()}>
-            {count}
+            {count.toString()}
           </h2>
           <div className="card-actions justify-around">
             <button
@@ -77,19 +79,7 @@ function SoonsoonsooncounterCard({ account }: { account: PublicKey }) {
             >
               Increment
             </button>
-            <button
-              className="btn btn-xs lg:btn-md btn-outline"
-              onClick={() => {
-                const value = window.prompt('Set value to:', count.toString() ?? '0')
-                if (!value || parseInt(value) === count || isNaN(parseInt(value))) {
-                  return
-                }
-                return setMutation.mutateAsync(parseInt(value))
-              }}
-              disabled={setMutation.isPending}
-            >
-              Set
-            </button>
+
             <button
               className="btn btn-xs lg:btn-md btn-outline"
               onClick={() => decrementMutation.mutateAsync()}
@@ -102,18 +92,6 @@ function SoonsoonsooncounterCard({ account }: { account: PublicKey }) {
             <p>
               <ExplorerLink path={`account/${account}`} label={ellipsify(account.toString())} />
             </p>
-            <button
-              className="btn btn-xs btn-secondary btn-outline"
-              onClick={() => {
-                if (!window.confirm('Are you sure you want to close this account?')) {
-                  return
-                }
-                return closeMutation.mutateAsync()
-              }}
-              disabled={closeMutation.isPending}
-            >
-              Close
-            </button>
           </div>
         </div>
       </div>

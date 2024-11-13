@@ -1,70 +1,57 @@
-#![allow(clippy::result_large_err)]
-
 use anchor_lang::prelude::*;
 
-declare_id!("AsjZ3kWAUSQRNt2pZVeJkywhZ6gpLpHZmJjduPmKZDZZ");
+declare_id!("Ho4gWX427c2qWdy1ZrQ97qA5B8eeSe86okrxJ1nMxvkR");
 
 #[program]
-pub mod soonsoonsooncounter {
+pub mod soo_counter {
     use super::*;
 
-  pub fn close(_ctx: Context<CloseSoonsoonsooncounter>) -> Result<()> {
-    Ok(())
-  }
+    pub fn initialize(ctx: Context<InitializeCounter>) -> Result<()> {
+        let counter_account = &mut ctx.accounts.counter;
+        counter_account.count = 0;
+        Ok(())
+    }
 
-  pub fn decrement(ctx: Context<Update>) -> Result<()> {
-    ctx.accounts.soonsoonsooncounter.count = ctx.accounts.soonsoonsooncounter.count.checked_sub(1).unwrap();
-    Ok(())
-  }
+    pub fn increment(ctx: Context<Increment>) -> Result<()> {
+        ctx.accounts.counter.count = ctx.accounts.counter.count.checked_add(1).unwrap();
+        Ok(())
+    }
 
-  pub fn increment(ctx: Context<Update>) -> Result<()> {
-    ctx.accounts.soonsoonsooncounter.count = ctx.accounts.soonsoonsooncounter.count.checked_add(1).unwrap();
-    Ok(())
-  }
-
-  pub fn initialize(_ctx: Context<InitializeSoonsoonsooncounter>) -> Result<()> {
-    Ok(())
-  }
-
-  pub fn set(ctx: Context<Update>, value: u8) -> Result<()> {
-    ctx.accounts.soonsoonsooncounter.count = value.clone();
-    Ok(())
-  }
+    pub fn decrement(ctx: Context<Decrement>) -> Result<()> {
+        ctx.accounts.counter.count = ctx.accounts.counter.count.checked_sub(1).unwrap();
+        Ok(())
+    }
 }
 
 #[derive(Accounts)]
-pub struct InitializeSoonsoonsooncounter<'info> {
-  #[account(mut)]
-  pub payer: Signer<'info>,
+pub struct InitializeCounter<'info> {
+    #[account(
+        init,
+        payer = signer,
+        space = 8 + Counter::INIT_SPACE,
+      )]
+    pub counter: Account<'info, Counter>,
 
-  #[account(
-  init,
-  space = 8 + Soonsoonsooncounter::INIT_SPACE,
-  payer = payer
-  )]
-  pub soonsoonsooncounter: Account<'info, Soonsoonsooncounter>,
-  pub system_program: Program<'info, System>,
-}
-#[derive(Accounts)]
-pub struct CloseSoonsoonsooncounter<'info> {
-  #[account(mut)]
-  pub payer: Signer<'info>,
+    #[account(mut)]
+    pub signer: Signer<'info>,
 
-  #[account(
-  mut,
-  close = payer, // close account and return lamports to payer
-  )]
-  pub soonsoonsooncounter: Account<'info, Soonsoonsooncounter>,
+    pub system_program: Program<'info, System>,
 }
 
 #[derive(Accounts)]
-pub struct Update<'info> {
-  #[account(mut)]
-  pub soonsoonsooncounter: Account<'info, Soonsoonsooncounter>,
+pub struct Increment<'info> {
+    #[account(mut)]
+    pub counter: Account<'info, Counter>,
+}
+
+#[derive(Accounts)]
+pub struct Decrement<'info> {
+    #[account(mut)]
+    pub counter: Account<'info, Counter>,
 }
 
 #[account]
 #[derive(InitSpace)]
-pub struct Soonsoonsooncounter {
-  count: u8,
+pub struct Counter {
+    pub count: u64,
 }

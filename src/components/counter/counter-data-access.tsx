@@ -1,6 +1,6 @@
 'use client'
 
-import {getSoonsoonsooncounterProgram, getSoonsoonsooncounterProgramId} from '@project/anchor'
+import {getSoocounterProgram, getSoocounterProgramId} from '@project/anchor'
 import {useConnection} from '@solana/wallet-adapter-react'
 import {Cluster, Keypair, PublicKey} from '@solana/web3.js'
 import {useMutation, useQuery} from '@tanstack/react-query'
@@ -10,17 +10,17 @@ import {useCluster} from '../cluster/cluster-data-access'
 import {useAnchorProvider} from '../solana/solana-provider'
 import {useTransactionToast} from '../ui/ui-layout'
 
-export function useSoonsoonsooncounterProgram() {
+export function useSoocounterProgram() {
   const { connection } = useConnection()
   const { cluster } = useCluster()
   const transactionToast = useTransactionToast()
   const provider = useAnchorProvider()
-  const programId = useMemo(() => getSoonsoonsooncounterProgramId(cluster.network as Cluster), [cluster])
-  const program = getSoonsoonsooncounterProgram(provider)
+  const programId = useMemo(() => getSoocounterProgramId(cluster.network as Cluster), [cluster])
+  const program = getSoocounterProgram(provider)
 
   const accounts = useQuery({
-    queryKey: ['soonsoonsooncounter', 'all', { cluster }],
-    queryFn: () => program.account.soonsoonsooncounter.all(),
+    queryKey: ['soocounter', 'all', { cluster }],
+    queryFn: () => program.account.counter.all(),
   })
 
   const getProgramAccount = useQuery({
@@ -28,10 +28,16 @@ export function useSoonsoonsooncounterProgram() {
     queryFn: () => connection.getParsedAccountInfo(programId),
   })
 
+  const counter = Keypair.generate();
+
   const initialize = useMutation({
-    mutationKey: ['soonsoonsooncounter', 'initialize', { cluster }],
-    mutationFn: (keypair: Keypair) =>
-      program.methods.initialize().accounts({ soonsoonsooncounter: keypair.publicKey }).signers([keypair]).rpc(),
+    mutationKey: ['soocounter', 'initialize', { cluster }],
+    mutationFn: ({ user }: { user: PublicKey }) =>
+      program.methods.initialize().accounts({
+        counter: counter.publicKey,
+        signer: user
+      }).signers([counter]).rpc(),
+
     onSuccess: (signature) => {
       transactionToast(signature)
       return accounts.refetch()
@@ -48,57 +54,40 @@ export function useSoonsoonsooncounterProgram() {
   }
 }
 
-export function useSoonsoonsooncounterProgramAccount({ account }: { account: PublicKey }) {
+export function useSoocounterProgramAccount({ account }: { account: PublicKey }) {
   const { cluster } = useCluster()
   const transactionToast = useTransactionToast()
-  const { program, accounts } = useSoonsoonsooncounterProgram()
+  const { program, accounts } = useSoocounterProgram()
 
   const accountQuery = useQuery({
-    queryKey: ['soonsoonsooncounter', 'fetch', { cluster, account }],
-    queryFn: () => program.account.soonsoonsooncounter.fetch(account),
+    queryKey: ['soocounter', 'fetch', { cluster, account }],
+    queryFn: () => program.account.counter.fetch(account),
   })
 
-  const closeMutation = useMutation({
-    mutationKey: ['soonsoonsooncounter', 'close', { cluster, account }],
-    mutationFn: () => program.methods.close().accounts({ soonsoonsooncounter: account }).rpc(),
-    onSuccess: (tx) => {
-      transactionToast(tx)
-      return accounts.refetch()
-    },
-  })
-
-  const decrementMutation = useMutation({
-    mutationKey: ['soonsoonsooncounter', 'decrement', { cluster, account }],
-    mutationFn: () => program.methods.decrement().accounts({ soonsoonsooncounter: account }).rpc(),
-    onSuccess: (tx) => {
-      transactionToast(tx)
-      return accountQuery.refetch()
-    },
-  })
 
   const incrementMutation = useMutation({
-    mutationKey: ['soonsoonsooncounter', 'increment', { cluster, account }],
-    mutationFn: () => program.methods.increment().accounts({ soonsoonsooncounter: account }).rpc(),
+    mutationKey: ['soocounter', 'increment', { cluster, account }],
+    mutationFn: () => program.methods.increment().accounts({ counter: account }).rpc(),
     onSuccess: (tx) => {
       transactionToast(tx)
       return accountQuery.refetch()
     },
   })
 
-  const setMutation = useMutation({
-    mutationKey: ['soonsoonsooncounter', 'set', { cluster, account }],
-    mutationFn: (value: number) => program.methods.set(value).accounts({ soonsoonsooncounter: account }).rpc(),
+
+  const decrementMutation = useMutation({
+    mutationKey: ['soocounter', 'decrement', { cluster, account }],
+    mutationFn: () => program.methods.decrement().accounts({ counter: account }).rpc(),
     onSuccess: (tx) => {
       transactionToast(tx)
       return accountQuery.refetch()
     },
   })
+
 
   return {
     accountQuery,
-    closeMutation,
     decrementMutation,
     incrementMutation,
-    setMutation,
   }
 }

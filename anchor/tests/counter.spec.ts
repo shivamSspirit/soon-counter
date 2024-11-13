@@ -1,76 +1,50 @@
 import * as anchor from '@coral-xyz/anchor'
-import {Program} from '@coral-xyz/anchor'
-import {Keypair} from '@solana/web3.js'
-import {Soonsoonsooncounter} from '../target/types/soonsoonsooncounter'
+import { Program } from '@coral-xyz/anchor'
+import { Keypair } from '@solana/web3.js'
+import { SooCounter } from '../target/types/soo_counter'
 
-describe('soonsoonsooncounter', () => {
+describe('soo-counter', () => {
   // Configure the client to use the local cluster.
   const provider = anchor.AnchorProvider.env()
   anchor.setProvider(provider)
   const payer = provider.wallet as anchor.Wallet
 
-  const program = anchor.workspace.Soonsoonsooncounter as Program<Soonsoonsooncounter>
+  const program = anchor.workspace.SooCounter as Program<SooCounter>;
 
-  const soonsoonsooncounterKeypair = Keypair.generate()
+  const counterKeypair = new Keypair();
 
-  it('Initialize Soonsoonsooncounter', async () => {
+  it('Initialize Counter', async () => {
     await program.methods
       .initialize()
       .accounts({
-        soonsoonsooncounter: soonsoonsooncounterKeypair.publicKey,
-        payer: payer.publicKey,
+        counter: counterKeypair.publicKey,
+        signer: payer.publicKey,
       })
-      .signers([soonsoonsooncounterKeypair])
+      .signers([counterKeypair])
       .rpc()
 
-    const currentCount = await program.account.soonsoonsooncounter.fetch(soonsoonsooncounterKeypair.publicKey)
+    const currentCount = await program.account.counter.fetch(counterKeypair.publicKey);
 
-    expect(currentCount.count).toEqual(0)
+    console.log("currentCount", currentCount.count)
+
+    expect(currentCount.count.toNumber()).toEqual(0)
   })
 
-  it('Increment Soonsoonsooncounter', async () => {
-    await program.methods.increment().accounts({ soonsoonsooncounter: soonsoonsooncounterKeypair.publicKey }).rpc()
+  it('Increment Counter', async () => {
+    await program.methods.increment().accounts({ counter: counterKeypair.publicKey }).rpc()
 
-    const currentCount = await program.account.soonsoonsooncounter.fetch(soonsoonsooncounterKeypair.publicKey)
+    const currentCount = await program.account.counter.fetch(counterKeypair.publicKey)
 
-    expect(currentCount.count).toEqual(1)
+    expect(currentCount.count.toNumber()).toEqual(1)
   })
 
-  it('Increment Soonsoonsooncounter Again', async () => {
-    await program.methods.increment().accounts({ soonsoonsooncounter: soonsoonsooncounterKeypair.publicKey }).rpc()
+  it('Decrement Counter', async () => {
+    await program.methods.decrement().accounts({ counter: counterKeypair.publicKey }).rpc()
 
-    const currentCount = await program.account.soonsoonsooncounter.fetch(soonsoonsooncounterKeypair.publicKey)
+    const currentCount = await program.account.counter.fetch(counterKeypair.publicKey)
 
-    expect(currentCount.count).toEqual(2)
+    expect(currentCount.count.toNumber()).toEqual(0)
   })
 
-  it('Decrement Soonsoonsooncounter', async () => {
-    await program.methods.decrement().accounts({ soonsoonsooncounter: soonsoonsooncounterKeypair.publicKey }).rpc()
 
-    const currentCount = await program.account.soonsoonsooncounter.fetch(soonsoonsooncounterKeypair.publicKey)
-
-    expect(currentCount.count).toEqual(1)
-  })
-
-  it('Set soonsoonsooncounter value', async () => {
-    await program.methods.set(42).accounts({ soonsoonsooncounter: soonsoonsooncounterKeypair.publicKey }).rpc()
-
-    const currentCount = await program.account.soonsoonsooncounter.fetch(soonsoonsooncounterKeypair.publicKey)
-
-    expect(currentCount.count).toEqual(42)
-  })
-
-  it('Set close the soonsoonsooncounter account', async () => {
-    await program.methods
-      .close()
-      .accounts({
-        payer: payer.publicKey,
-        soonsoonsooncounter: soonsoonsooncounterKeypair.publicKey,
-      })
-      .rpc()
-
-    // The account should no longer exist, returning null.
-    const userAccount = await program.account.soonsoonsooncounter.fetchNullable(soonsoonsooncounterKeypair.publicKey)
-    expect(userAccount).toBeNull()
-  })
 })
