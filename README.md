@@ -1,3 +1,4 @@
+
 # soon-counter
 
 ## Getting Started
@@ -15,80 +16,24 @@
 #### Clone the repo
 
 ```shell
-git clone <repo-url>
-cd <repo-name>
+git clone git@github.com:shivamSspirit/soon-counter.git
+cd soon-counter
+npm i
+npm run dev
 ```
 
-#### Install Dependencies
+You will land here.
 
-```shell
-pnpm install
-```
+[soo-counter](/public/soocount.jpeg)
 
-#### Start the web app
+Navigate to the cluster and select Custom
 
-```
-pnpm dev
-```
+[soo-cluster](/public/soocluster.jpeg)
 
-## Apps
+Set up your Backpack wallet with the custom Soon RPC Devnet endpoint.
 
-### anchor
+[soo-wallet](/public/soowallet.jpeg)
 
-This is a Solana program written in Rust using the Anchor framework.
+Now you can create counter and handle increment and decrement operation.
 
-#### Commands
 
-You can use any normal anchor commands. Either move to the `anchor` directory and run the `anchor` command or prefix the command with `pnpm`, eg: `pnpm anchor`.
-
-#### Sync the program id:
-
-Running this command will create a new keypair in the `anchor/target/deploy` directory and save the address to the Anchor config file and update the `declare_id!` macro in the `./src/lib.rs` file of the program.
-
-You will manually need to update the constant in `anchor/lib/counter-exports.ts` to match the new program id.
-
-```shell
-pnpm anchor keys sync
-```
-
-#### Build the program:
-
-```shell
-pnpm anchor-build
-```
-
-#### Start the test validator with the program deployed:
-
-```shell
-pnpm anchor-localnet
-```
-
-#### Run the tests
-
-```shell
-pnpm anchor-test
-```
-
-#### Deploy to Devnet
-
-```shell
-pnpm anchor deploy --provider.cluster devnet
-```
-
-### web
-
-This is a React app that uses the Anchor generated client to interact with the Solana program.
-
-#### Commands
-
-Start the web app
-
-```shell
-pnpm dev
-```
-
-Build the web app
-
-```shell
-pnpm build
-```
