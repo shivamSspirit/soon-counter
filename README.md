@@ -24,15 +24,15 @@ npm run dev
 
 You will land here.
 
-[soo-counter](/public/soocount.jpeg)
+![soo-counter](/public/soocount.jpeg)
 
 Navigate to the cluster and select Custom
 
-[soo-cluster](/public/soocluster.jpeg)
+![soo-cluster](/public/soocluster.jpeg)
 
 Set up your Backpack wallet with the custom Soon RPC Devnet endpoint.
 
-[soo-wallet](/public/soowallet.jpeg)
+![soo-wallet](/public/soowallet.jpeg)
 
 Now you can create counter and handle increment and decrement operation.
 
