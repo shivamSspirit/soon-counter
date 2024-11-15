@@ -1,6 +1,8 @@
 
 # soon-counter
 
+The guide for this repo is live at [soon-one-o-one](https://dev.to/shivamsspirit/soon-101-overview-of-building-program-on-soon-19o1)
+
 ## Getting Started
 
 ### Prerequisites
